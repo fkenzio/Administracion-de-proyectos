@@ -1,14 +1,18 @@
 # Script de Automatización DNS - Proyecto Reprobados (Windows)
 # 1. Verificación de IP Estática
-$IPType = Get-NetIPStrategy -AddressFamily IPv4
-if ($IPType.AddressConfig -ne "Static") {
- Write-Host "Configurando IP Estática..." -ForegroundColor Yellow
- $IP = Read-Host "IP para este servidor"
- $Mask = Read-Host "Prefijo de red (ej: 24)"
- $GW = Read-Host "Gateway"
- $Interface = (Get-NetAdapter | Where-Object Status -eq "Up").InterfaceAlias
- New-NetIPAddress -InterfaceAlias $Interface -IPAddress $IP -PrefixLength $Mask -DefaultGateway $GW
- Set-DnsClientServerAddress -InterfaceAlias $Interface -ServerAddresses ("127.0.0.1", "8.8.8.8")
+Get-NetAdapter | Where-Object Status -eq "Up" | Format-Table Name, InterfaceAlias
+$Interface = Read-Host "Escribe el InterfaceAlias que quieres configurar"
+$IPInfo = Get-NetIPInterface -InterfaceAlias $Interface -AddressFamily IPv4
+
+if ($IPInfo.Dhcp -eq "Enabled") {
+    Write-Host "Configurando IP Estática..." -ForegroundColor Yellow
+
+    $IP = Read-Host "IP para este servidor"
+    $Mask = Read-Host "Prefijo de red (ej: 24)"
+    $GW = Read-Host "Gateway"
+
+    New-NetIPAddress -InterfaceAlias $Interface -IPAddress $IP -PrefixLength $Mask -DefaultGateway $GW
+    Set-DnsClientServerAddress -InterfaceAlias $Interface -ServerAddresses ("127.0.0.1","8.8.8.8")
 }
 # 2. Instalación del Rol DNS (Idempotente)
 if (!(Get-WindowsFeature DNS).Installed) {
