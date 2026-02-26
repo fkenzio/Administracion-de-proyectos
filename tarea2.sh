@@ -9,14 +9,11 @@ else
 fi
 # 2. Orquestación Dinámica (Interactivo)
 echo "--- Configuración del Ámbito DHCP ---"
-read -p "Nombre del Ámbito: "
-SCOPE_NAME
+read -p "Nombre del Ámbito: " SCOPE_NAME
 
-read -p "Rango Inicial (ej.192.168.100.50): " 
-START_IP
+read -p "Rango Inicial (ej.192.168.100.50): " START_IP
 
-read -p "Rango Final (ej.192.168.100.150): " 
-END_IP
+read -p "Rango Final (ej.192.168.100.150): " END_IP
 
 read -p "Puerta de Enlace: " GW_IP
 
@@ -31,8 +28,7 @@ fi
 cat <<EOF | sudo tee/etc/dhcp/dhcpd.conf 
 option domain-name "sistemas.local";
 
-option domain-name-servers
-$DNS_IP;
+option domain-name-servers $DNS_IP;
 
 default-lease-time 600;
 
