@@ -3,7 +3,7 @@
 if ! dpkg -l | grep -q isc-dhcp-server;
 then
  echo "Instalando isc-dhcp-serverde forma desatendida..."
- sudo apt-get update && sudo aptget install -y isc-dhcp-server
+ sudo apt-get update && sudo apt-get install -y isc-dhcp-server
 else
  echo "El servicio DHCP ya está instalado. Omitiendo paso."
 fi
@@ -25,7 +25,7 @@ if [[ ! $START_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
  exit 1
 fi
 # 3. Aplicar Configuración
-cat <<EOF | sudo tee/etc/dhcp/dhcpd.conf 
+cat <<EOF | sudo tee /etc/dhcp/dhcpd.conf 
 option domain-name "sistemas.local";
 
 option domain-name-servers $DNS_IP;
@@ -43,9 +43,8 @@ subnet 192.168.100.0 netmask 255.255.255.0 {
 }
 EOF
 # Reiniciar y Validar
-sudo systemctl restart isc-dhcpserver
+sudo systemctl restart isc-dhcp-server
 echo "--- Módulo de Monitoreo ---"
-sudo systemctl status isc-dhcp-server
---no-pager
+sudo systemctl status isc-dhcp-server --no-pager
 echo "Concesiones activas:"
 cat /var/lib/dhcp/dhcpd.leases
